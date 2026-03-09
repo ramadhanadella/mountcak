@@ -18,6 +18,22 @@ app.get("/api/mountains", async (req, res) => {
   }
 });
 
+app.post("/api/mountains", async (req, res) => {
+  try {
+    const { name, location, altitude, difficulty_level, description } =
+      req.body;
+
+    const newMountain = await pool.query(
+      "INSERT INTO mountains (name, location, altitude, difficulty_level, description) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [name, location, altitude, difficulty_level, description],
+    );
+    res.json(newMountain.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "gagal menambahkan data" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
